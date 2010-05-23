@@ -1,0 +1,35 @@
+{
+    "status": "ok",
+    "response": {
+        "submissions": [{
+            "id": "1001",
+            "timestamp": "2007-01-01 01:01:01",
+            "user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",
+            "remote_addr": "127.0.0.1",
+            "data": [{
+                "field": "1111",
+                "value": "John Smith"
+            },
+            {
+                "field": "2222",
+                "value": "Apple"
+            }]
+        },
+        {
+            "id": "1001",
+            "timestamp": "2007-02-02 02:02:02",
+            "user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",
+            "remote_addr": "127.0.0.1",
+            "data": [{
+                "field": "1111",
+                "value": "Jane Smith"
+            },
+            {
+                "field": "2222",
+                "value": "Banana"
+            }]
+        }],
+        "total": 2,
+        "pages": 1
+    }
+}
