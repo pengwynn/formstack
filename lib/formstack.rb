@@ -1,23 +1,23 @@
 require 'httparty'
 require 'hashie'
 
-directory = File.expand_path(File.dirname(__FILE__))
-
 Hash.send :include, Hashie::HashExtensions
 
-module Formstack
+# require all dependencies
+Dir[File.dirname(__FILE__) + '/formstack/**/*.rb'].each {|file| require file }
+
+module FormStack
   
   VERSION = "0.0.1".freeze
 
-  
-  class FormstackError < StandardError
-    attr_reader :data
+  class << self
 
-    def initialize(data)
-      @data = data
-      super
-    end
+    attr_accessor :connection
+
+    def configure(&block)
+      self.connection ||= OauthConnection.new
+      yield(connection) if block_given?
+    end 
+
   end
 end
-
-require File.join(directory, 'formstack', 'client')

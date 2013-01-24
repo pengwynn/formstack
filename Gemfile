@@ -1,6 +1,9 @@
 source :gemcutter
 gem "hashie", ">= 0.1.3"
 gem "httparty", ">= 0.1.0"
+gem "awesome_print"
+gem "json"
+gem "curb"
 
 group :development do
   gem "shoulda", ">= 2.10.1"
