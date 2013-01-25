@@ -1,67 +1,93 @@
 # Formstack
 
-Simple Ruby wrapper for the [Formstack](http://formstack.com) (née Formspring) API. 
+Simple Ruby wrapper for the [Formstack](http://formstack.com) API. 
 
 ## Installation
 
     sudo gem install formstack
+
+### Using Bundler
+
+    gem "formstack", :git => "git://github.com/TinderBox/formstack.git"
+
+
     
 ## Usage
 
-You'll need a Formstack [API key](https://www.formstack.com/admin/apiKey/main) with appropriate permissions.
+You'll to [register your application](https://www.formstack.com/developers/applications/) and make note of your Client ID and Client Secret, and set up a Redirect URI.
 
     require 'formstack'
     
-    client = Formstack::Client.new("your_api_key")
+    FormStack.configure do |c| 
+      c.client_id = < client_id >
+      c.client_secret = < client_secret >
+      c.return_url = < return_url >
+      c.access_token = < access_token >
+    end
+
+The Access Token doesn't need to be set, as you won't have it until after the Oauth dance. 
+To performe the authentication precedure, you could do the following if you are using something like rails:
+
+### First Create the Connection
+
+Have a method where you can create the FormStack connection
+
+    def create_connection(access_token = false)
+      FormStack.configure do |c|
+        c.client_id = client_id
+        c.client_secret = client_secret
+        c.return_url = return_url
+        c.access_token = (!!access_token ? access_token]: nil)
+      end
+      @connection = FormStack.connection
+    end
+
+Then begin the dance!
+
+    create_connection()
+    redirect_to @connection.connect()
+
+You'll then be asked to allow your application to use FormStack's API
+
+### Finish the Dance
+
+At your redirect location, you'll want to do something like:
+
+    create_connection()
+    access_token = @connection.identify(params)
+    if (not access_token.nil?)
+      current_user.integrations[Integration::FORMSTACK] = {
+        :access_token => access_token
+      }
+
+      flash[:notice] = "You have successfully connected to your application!"
+    else
+      flash[:error] = "There was an error while connecting to your application!"
+    end
     
 ### Listing your forms
 
-    forms = client.forms
+    forms = FormStack::Form.all
     
 ### Getting details for a single form
 
-    form = client.form(1234)
+    form = FormStack::Form.find(1234)
     
 ### Getting submission data for a form
 
-    data = client.data(1234, :page => 2)
+    submission = form.submission(form_id)
     
 ### Submitting data
 
-Here's where we apply some Ruby magic. The API requires you to know the IDs of your custom form fields (e.g. `field_123=blue`). You're more than welcome to use IDs for your hash keys if you like, but you don't have to:
-    
-    # hash keys correspond to the value of the `name` key in `form.fields`
-    
-    answers = {
-      :name => 'Wynn Netherland',
-      :rating => 5
-    }
-    
-    # submit answers to form 1234 - field IDs are looked up on-the-fly
-    client.submit(1234, :data => answers)
-    
-### Editing data
-
-    # hash keys correspond to the value of the `name` key in `form.fields`
-    
-    answers = {
-      :name => 'Wynn Netherland',
-      :rating => 5
-    }
-    
-    # edit answers for submission 10001
-    client.edit(10001, :data => answers)
-    
-### Deleting data
-
-    client.delete(10001)
+    form.create_submission(data = {})
     
 
 
 ## TODO:
 
 * Handle file uploads for submissions
-* Intelligent permission handling for different API key access levels
+* Handle updating of objects
+* Handle deletion of objects
     
 
 ## Note on Patches/Pull Requests
@@ -74,6 +100,6 @@ Here's where we apply some Ruby magic. The API requires you to know the IDs of y
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
-### Copyright
+### License
 
-Copyright (c) 2010 Wynn Netherland. See LICENSE for details.
+http://opensource.org/licenses/MIT
