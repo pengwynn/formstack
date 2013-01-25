@@ -1,26 +1,17 @@
 module FormStack
 	class Form < HashAttributeClass
 
-		CONTROLLER = "form"
-
-		@attributes = {}
-
-		hash_attr_accessor :id, :fields, :notifications#,
-							# :name, :viewkey, :views, :created, :deleted, :submissions
-
-		def initialize()
-			 # create class where key-value pairs in the @attributes hash
-			 # function as actial attributes / methods of a model
-			super()
-		end
-
 		# https://www.formstack.com/developers/api/resources/form#form_GET
 		def self.all
+			forms = []
 			result = FormStack.connection.get({
 				:url => CONTROLLER
 			})
-			return result["forms"]
-		end
+			result["forms"].each {|f|
+				forms << ((FormStack::Form.new).attributes = f)
+			}
+			return forms
+		end	
 
 		# https://www.formstack.com/developers/api/resources/form#form_POST
 		def self.create(attrs = {})
@@ -37,6 +28,7 @@ module FormStack
 			})
 			f = FormStack::Form.new
 			f.attributes = result
+			return f
 		end
 
 		# https://www.formstack.com/developers/api/resources/form#form/:id_PUT
@@ -56,18 +48,76 @@ module FormStack
 			})
 			f = FormStack::Form.new
 			f.attributes = result
+			return f
 		end
 
-		# set up aliases
-		class << self
-			alias :forms  :all
-			alias :index  :all
-			alias :post   :create
-			alias :get    :find
-			alias :show   :find
-			alias :put    :update
-			alias :delete :destroy
+		# fields
+
+		# https://www.formstack.com/developers/api/resources/field#form/:id/field_GET
+		def fields
+			fields = []
+			result = FormStack.connection.get({
+				:url => "#{CONTROLLER}/#{self[:id]}/field"
+			})
+			result["fields"].each {|f|
+				fields << ((FormStack::Field.new).attributes = f)
+			}
+			return fields
 		end
 
+		# https://www.formstack.com/developers/api/resources/field#form/:id/field_POST
+		def create_field(attrs = {})
+			result = FormStack.connection.post({
+				:url => "#{CONTROLLER}/#{self[:id]}/field",
+				:params => attrs
+			})
+			return result
+		end
+
+		# submissions
+
+		# https://www.formstack.com/developers/api/resources/submission#form/:id/submission_GET
+		def submissions
+			submissions = []
+			result = FormStack.connection.get({
+				:url => "#{CONTROLLER}/#{self[:id]}/submission"
+			})
+			result["submisisons"].each {|s|
+				submissions << ((FormStack::Submission.new).attributes = s)
+			}
+			return submissions
+		end
+
+		# https://www.formstack.com/developers/api/resources/submission#form/:id/submission_POST
+		def create_submission(attrs = {})
+			result = FormStack.connection.post({
+				:url => "#{CONTROLLER}/#{self[:id]}/submission",
+				:params => attrs
+			})
+			return result
+		end
+
+		# confirmations
+
+		# https://www.formstack.com/developers/api/resources/confirmation#form/:id/confirmation_GET
+		def confirmations
+			confirmations = []
+			result = FormStack.connection.get({
+				:url => "#{CONTROLLER}/#{self[:id]}/confirmation"
+			})
+			result["submisisons"].each {|s|
+				submissions << ((FormStack::Confirmation.new).attributes = s)
+			}
+			return confirmations
+		end
+
+		# https://www.formstack.com/developers/api/resources/confirmation#form/:id/confirmation_POST
+		def create_confirmation(attrs = {})
+			result = FormStack.connection.post({
+				:url => "#{CONTROLLER}/#{self[:id]}/confirmation",
+				:params => attrs
+			})
+			return result
+		end
 	end
 end
