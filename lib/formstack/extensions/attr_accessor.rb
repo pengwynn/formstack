@@ -2,14 +2,16 @@
 class HashAttributeClass  
 	attr_accessor :attributes
 
-	def initialize()
-		@attributes = {}
+	def initialize(attributes = {})
+		@attributes = attributes
 	end
 
 	def [](attribute)
-		self.send(attribute.to_s)
+		@attributes[attribute.to_s]
 	end
 
+	# for if we want to create a bunch of getters and setters for the key-value pairs
+	# in @attributes
 	def self.hash_attr_accessor(*accessors) 
 		accessors.each do |m| 
 			define_method(m)       { @attributes[m] }

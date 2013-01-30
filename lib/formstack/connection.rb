@@ -1,5 +1,6 @@
 module FormStack
 	class Connection
+		require "curb"
 
 		HEADERS_ACCEPT = {
 			:json => "application/json",
@@ -38,52 +39,30 @@ module FormStack
 		def get(o = {})
 			url = o[:url]
 			params = (o[:params] or o[:data] or {})
-			format = (o[:format] or :json)
 
 			param_string = params.empty? ? "" : QueryParams.encode(params)
-			url_string = "#{@host}/#{url.to_s}.#{format.to_s}?#{param_string}"
-
-			ap url_string if @debug
-
-			response = Curl::Easy.perform(url_string) do |curl|
-				curl.headers["Accept"] = HEADERS_ACCEPT[format]
-				curl.headers["Content-Type"] = HEADERS_CONTENT_TYPE[format]
-				curl.headers["Authorization"] = "Bearer #{@access_token}"
-			end
-			code = response.response_code
-
-			response = {:code => code, :response => response.body_str }
-			return parse_response(response)
+			return simple_request(:get, url, nil, param_string)			
 		end
 
 		def post(o = {})
 			url = o[:url]
 			data = (o[:data] or o[:params] or {})
-			format = (o[:format] or :json)
 
-			code = -1
-			url = "#{@host}/#{url.to_s}.#{format.to_s}"
-
-			ap url if @debug
-			req = Curl::Easy.http_post(url, data.send("to_#{format.to_s}")) do |curl|
-				curl.headers["Accept"] = HEADERS_ACCEPT[format]
-				curl.headers["Content-Type"] = HEADERS_CONTENT_TYPE[format]
-				curl.headers["Authorization"] = "Bearer #{@access_token}"
-				curl.on_complete {|response, err|
-					code = response.response_code
-				}
-			end
-
-			response = {:code => code, :response => req.body_str }
-			return parse_response(response)
+			return simple_request(:post, url, data)
 		end
 
-		def put
+		def put(o = {})
+			url = o[:url]
+			data = (o[:data] or o[:params] or {})
 
+			return simple_request(:put, url, data)
 		end
 
-		def delete
+		def delete(o = {})
+			url = o[:url]
+			data = (o[:data] or o[:params] or {})
 
+			return simple_request(:delete, url, data)
 		end
 
 		def upload(o = {})
@@ -112,6 +91,25 @@ module FormStack
 			c.http_post(post_fields)
 
 			response = {:code => c.response_code, :response => c.body_str}
+			return parse_response(response)
+		end
+
+	private
+
+		def simple_request(method, url, data, query_string = "", format = :json )
+			url = "#{@host}/#{url.to_s}.#{format.to_s}"
+			data = data.send("to_#{format.to_s}") if data
+
+			args = url
+			args = ([args] << data) if data
+			req = Curl::Easy.send("http_#{method.to_s}", *args) do |curl|
+				curl.headers["Accept"] = HEADERS_ACCEPT[format]
+				curl.headers["Content-Type"] = HEADERS_CONTENT_TYPE[format]
+				curl.headers["Authorization"] = "Bearer #{@access_token}"
+				curl.verbose = @debug
+			end
+
+			response = {:code => req.response_code, :response => req.body_str}
 			return parse_response(response)
 		end
 

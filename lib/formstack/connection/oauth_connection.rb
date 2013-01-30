@@ -3,7 +3,6 @@ module FormStack
 	# FormStack oauth documentation
 	# https://www.formstack.com/developers/api/authorization
 	class OauthConnection < FormStack::Connection
-		require "curl"
 		# client_id, and client_secret are defined by FormStack
 		# when registering an application.
 		# the access_token is the token response from FormStack
@@ -29,7 +28,7 @@ module FormStack
 			url += "?client_id=#{self.client_id}"
 			url += "&redirect_uri=#{return_url}"
 			url += "&response_type=code"
-			ap url
+			ap url if FormStack.connection.debug
 			return url
 		end
 		alias_method :connect_url, :connect
@@ -49,7 +48,7 @@ module FormStack
 				:redirect_uri => return_url,
 				:grant_type => "authorization_code"
 			}
-			ap data
+			ap data if FormStack.connection.debug
 			# response = Curl::Easy.http_post(url, data.to_json)
 			# response_body = JSON.parse(response.body_str)
 			# access_token = response_body["access_token"]

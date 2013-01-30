@@ -8,7 +8,7 @@ module FormStack
 				:url => CONTROLLER
 			})
 			result["forms"].each {|f|
-				forms << ((FormStack::Form.new).attributes = f)
+				forms << FormStack::Form.new(f)
 			}
 			return forms
 		end	
@@ -19,26 +19,6 @@ module FormStack
 				:url => CONTROLLER,
 				:params => self.define_attributes.merge(attrs)
 			})
-		end
-
-		# https://www.formstack.com/developers/api/resources/form#form/:id_GET
-		def self.find(id)
-			result = FormStack.connection.get({
-				:url => "#{CONTROLLER}/#{id}"
-			})
-			f = FormStack::Form.new
-			f.attributes = result
-			return f
-		end
-
-		# https://www.formstack.com/developers/api/resources/form#form/:id_PUT
-		def self.update(id, args)
-
-		end
-
-		# https://www.formstack.com/developers/api/resources/form#form/:id_DELETE
-		def self.destroy(id)
-
 		end
 
 		# https://www.formstack.com/developers/api/resources/form#form/:id/copy_POST
@@ -82,7 +62,7 @@ module FormStack
 			result = FormStack.connection.get({
 				:url => "#{CONTROLLER}/#{self[:id]}/submission"
 			})
-			result["submisisons"].each {|s|
+			result["submissions"].each {|s|
 				submissions << ((FormStack::Submission.new).attributes = s)
 			}
 			return submissions
@@ -105,8 +85,8 @@ module FormStack
 			result = FormStack.connection.get({
 				:url => "#{CONTROLLER}/#{self[:id]}/confirmation"
 			})
-			result["submisisons"].each {|s|
-				submissions << ((FormStack::Confirmation.new).attributes = s)
+			result["confirmations"].each {|s|
+				confirmations << ((FormStack::Confirmation.new).attributes = s)
 			}
 			return confirmations
 		end
