@@ -19,8 +19,9 @@ module FormStack
 		attr_accessor :consumer_key, :consumer_secret, :access_token, :response_code
 		attr_accessor :return_url
 
-		AUTHORIZATION_ENDPOINT = FormStack::Connection::BASE_URL + "oauth2/authorize"
-		TOKEN_ENDPOINT = FormStack::Connection::BASE_URL + "oauth2/token"
+		BASE_URL = "https://www.formstack.com/api/v2/"
+		AUTHORIZATION_ENDPOINT = BASE_URL + "oauth2/authorize"
+		TOKEN_ENDPOINT = BASE_URL + "oauth2/token"
 
 		# access_token is the token received from the third party after
 		#   confirming that we have received the token_response
@@ -39,6 +40,7 @@ module FormStack
 			@access_token = args[:access_token]
 			@response_code = args[:response_code]
 			@return_url = args[:return_url]
+			@use_ssl = args[:use_ssl].nil? ? true : args[:use_ssl]
 		end
 	
 
@@ -46,30 +48,29 @@ module FormStack
 		# to connect with FormStack
 		def authorize()
 			url = AUTHORIZATION_ENDPOINT
-			url += "?client_id=#{self.client_id}"
-			url += "&redirect_uri=#{return_url}"
+			url += "?client_id=#{@consumer_key}"
+			url += "&redirect_uri=#{@return_url}"
 			url += "&response_type=code"
-			ap url if FormStack.connection.debug
+			ap url
 			return url
 		end
-		alias_method :connect_url, :connect
-		alias_method :redirect_url, :connect
+		alias_method :connect_url, :authorize
+		alias_method :redirect_url, :authorize
 
 		def identify(response = {})
 			@response_code = response[:code]
 			state = response[:state]
 
 			url = TOKEN_ENDPOINT
-			url.gsub!("https", "http") if !use_ssl
+			url.gsub!("https", "http") if !@use_ssl
 
 			data = {
-				:client_id => client_id,
+				:client_id => @consumer_key,
 				:code => @response_code,
-				:client_secret => client_secret,
+				:client_secret => @consumer_secret,
 				:redirect_uri => return_url,
 				:grant_type => "authorization_code"
 			}
-			ap data if FormStack.connection.debug
 
 			uri = URI.parse(url)
 			http = Net::HTTP.new(uri.host)

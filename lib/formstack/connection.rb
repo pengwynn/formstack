@@ -2,7 +2,6 @@
 module FormStack
 	class Connection
 		include FormStack::ConnectionHelpers
-		require "curb"
 
 		HEADERS_ACCEPT = {
 			:json => "application/json",
@@ -13,8 +12,6 @@ module FormStack
 			:json => "application/json",
 			:xml => "application/xml"
 		}
-
-		BASE_URL = "https://www.formstack.com/api/v2/"
 
 		attr_accessor :debug
 		attr_accessor :configuration
@@ -29,6 +26,7 @@ module FormStack
 			@oauth2_connection = FormStack::Oauth2Connection.new(@configuration)
 			@configuration
 		end
+
 	    # Checks if credentials are set for OAuth2 or other service if later added
 		def check_credentials
 			raise "Please set load_configuration with #{FormStack::Oauth2Connection.keys.join(',')}" unless has_oauth2_credentials?
@@ -44,14 +42,30 @@ module FormStack
 		end
 
 
-		def site
-			@oauth2_connection.oauth_client.site
+		def forms
+			
 		end
 
-		def debug=(d)
-			@debug = d
+		def fields
+
 		end
 
-		
+		def submissions
+
+		end
+
+		def notifications
+
+		end
+
+		def confirmations
+
+		end
+
+		def webhooks
+
+		end
+
+
 	end
 end

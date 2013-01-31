@@ -1,6 +1,7 @@
 module FormStack
 	# shorthand helpers for status codes
 	module ConnectionHelpers
+		require "curb"
 
 		def get(o = {})
 			url = o[:url]
