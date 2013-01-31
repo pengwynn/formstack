@@ -16,36 +16,20 @@ Simple Ruby wrapper for the [Formstack](http://formstack.com) API.
 
 You'll to [register your application](https://www.formstack.com/developers/applications/) and make note of your Client ID and Client Secret, and set up a Redirect URI.
 
-    require 'formstack'
-    
-    FormStack.configure do |c| 
-      c.client_id = < client_id >
-      c.client_secret = < client_secret >
-      c.return_url = < return_url >
-      c.access_token = < access_token >
-    end
-
-The Access Token doesn't need to be set, as you won't have it until after the Oauth dance. 
 To performe the authentication precedure, you could do the following if you are using something like rails:
 
 ### First Create the Connection
 
-Have a method where you can create the FormStack connection
+Begin the dance! / authorization process :-)
 
-    def create_connection(access_token = false)
-      FormStack.configure do |c|
-        c.client_id = client_id
-        c.client_secret = client_secret
-        c.return_url = return_url
-        c.access_token = (!!access_token ? access_token]: nil)
-      end
-      @connection = FormStack.connection
+    def connect_to_formstack
+      fs = FormStack::Oauth2Connection.new({
+        :consumer_secret => client_secret,
+        :consumer_key => client_id,
+        :return_url => return_url # oauth_token_callback below
+      })
+      redirect_to fs.authorize()      
     end
-
-Then begin the dance!
-
-    create_connection()
-    redirect_to @connection.connect()
 
 You'll then be asked to allow your application to use FormStack's API
 
@@ -53,25 +37,41 @@ You'll then be asked to allow your application to use FormStack's API
 
 At your redirect location, you'll want to do something like:
 
-    create_connection()
-    access_token = @connection.identify(params)
-    if (not access_token.nil?)
-      current_user.integrations[Integration::FORMSTACK] = {
-        :access_token => access_token
-      }
+    def oauth_token_callback
+      fs = FormStack::Oauth2Connection.new({
+        :consumer_secret => client_secret,
+        :consumer_key => client_id,
+        :return_url => return_url,
+        :use_ssl => Rails.env != "development"
+      })
+      access_token = fs.identify(params)
+      if (not access_token.nil?)
+        current_user.integrations[Integration::FORMSTACK] = {
+          :access_token => access_token
+        }
 
-      flash[:notice] = "You have successfully connected to your application!"
-    else
-      flash[:error] = "There was an error while connecting to your application!"
+        flash[:notice] = "You have successfully connected to your formstack account!"
+      else
+        flash[:error] = "There was an error while connecting to your formstack account"
+      end
     end
     
+
+### Retreive your access token from wherever you saved it, and instantiate a FromStack::Connection object!
+
+    @fs = FormStack::Connection.new({
+      :access_token => "whatever-it-is"
+    })
+
+    You can now do everything through the gem that FormStack says you can do as in their API docs
+
 ### Listing your forms
 
-    forms = FormStack::Form.all
+    forms = @fs.forms.all
     
 ### Getting details for a single form
 
-    form = FormStack::Form.find(1234)
+    form = @fs.forms.find(1234)
     
 ### Getting submission data for a form
 
@@ -86,8 +86,7 @@ At your redirect location, you'll want to do something like:
 ## TODO:
 
 * Handle file uploads for submissions
-* Handle updating of objects
-* Handle deletion of objects
+* Finish readme for all other calls
     
 
 ## Note on Patches/Pull Requests
