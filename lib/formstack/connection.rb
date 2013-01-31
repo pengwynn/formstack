@@ -34,7 +34,7 @@ module FormStack
 
 	    # Checks if OAuth credentials are set. Does not validate creds with server.
 		def has_oauth2_credentials?
-			return fales if @configuration.nil?
+			return false if @configuration.nil?
 			FormStack::Oauth2Connection.keys.each do |key|
 				# check if credentials exist or if they are just white space
 				return false if @configuration[key].nil or @configuration[key].match(/^\s*$/)
@@ -43,7 +43,7 @@ module FormStack
 
 
 		def forms
-			
+
 		end
 
 		def fields
