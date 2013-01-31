@@ -1,5 +1,7 @@
+# Based on https://github.com/TinderBox/rightsignature-api/blob/master/lib/rightsignature/connection.rb
 module FormStack
 	class Connection
+		include FormStack::ConnectionHelpers
 		require "curb"
 
 		HEADERS_ACCEPT = {
@@ -13,122 +15,43 @@ module FormStack
 		}
 
 		BASE_URL = "https://www.formstack.com/api/v2/"
-		AUTHORIZATION_ENDPOINT = BASE_URL + "oauth2/authorize"
-		TOKEN_ENDPOINT = BASE_URL + "oauth2/token"
 
-		attr_accessor :host
 		attr_accessor :debug
-		attr_accessor :access_token
+		attr_accessor :configuration
+		attr_accessor :oauth2_connection
 
-		def initialize(access_token = nil)
-			@access_token = access_token if (not access_token.nil?)
-			set_host(BASE_URL)
-			FormStack.connection = self
+		def initialize(creds = {})
+			@configuration = {}
+			FormStack::Oauth2Connection.keys.each do |key|
+				@configuration[key] = creds[key].to_s
+			end
+
+			@oauth2_connection = FormStack::Oauth2Connection.new(@configuration)
+			@configuration
+		end
+	    # Checks if credentials are set for OAuth2 or other service if later added
+		def check_credentials
+			raise "Please set load_configuration with #{FormStack::Oauth2Connection.keys.join(',')}" unless has_oauth2_credentials?
 		end
 
-		# sets the host for use with the {get}, {post}, and {upload} methods
-		# @param [String] new_host the host to use
-		def set_host(new_host)
-			@host = new_host.split("").last == "/" ? new_host.chop : new_host
+	    # Checks if OAuth credentials are set. Does not validate creds with server.
+		def has_oauth2_credentials?
+			return fales if @configuration.nil?
+			FormStack::Oauth2Connection.keys.each do |key|
+				# check if credentials exist or if they are just white space
+				return false if @configuration[key].nil or @configuration[key].match(/^\s*$/)
+			end
+		end
+
+
+		def site
+			@oauth2_connection.oauth_client.site
 		end
 
 		def debug=(d)
 			@debug = d
 		end
 
-		def get(o = {})
-			url = o[:url]
-			params = (o[:params] or o[:data] or {})
-
-			param_string = params.empty? ? "" : QueryParams.encode(params)
-			return simple_request(:get, url, nil, param_string)			
-		end
-
-		def post(o = {})
-			url = o[:url]
-			data = (o[:data] or o[:params] or {})
-
-			return simple_request(:post, url, data)
-		end
-
-		def put(o = {})
-			url = o[:url]
-			data = (o[:data] or o[:params] or {})
-
-			return simple_request(:put, url, data)
-		end
-
-		def delete(o = {})
-			url = o[:url]
-			data = (o[:data] or o[:params] or {})
-
-			return simple_request(:delete, url, data)
-		end
-
-		def upload(o = {})
-			url = o[:url] or @default_host
-			data = (o[:data] or o[:params] or o[:fields] or {})
-			format = (o[:format] or :json)
-			file_name = o[:file_name]
-			file_field_name = o[:file_field_name]
-
-			url = "#{@host}/#{url}.#{format.to_s}?access_token=#{@access_token.to_s}"		
-
-			ap url if @debug
-
-			post_fields = []
-			post_fields << Curl::PostField.file(file_field_name, file_name)
-			data.each do |name,obj|
-				if obj and obj.is_a?(Hash)
-					obj.each do |attribute, value|
-						post_fields << Curl::PostField.content("#{name}[#{attribute}]", value)	
-					end				
-				end
-			end
-
-			c = Curl::Easy.new(url)
-			c.multipart_form_post = true
-			c.http_post(post_fields)
-
-			response = {:code => c.response_code, :response => c.body_str}
-			return parse_response(response)
-		end
-
-	private
-
-		def simple_request(method, url, data, query_string = "", format = :json )
-			url = "#{@host}/#{url.to_s}.#{format.to_s}"
-			data = data.send("to_#{format.to_s}") if data
-
-			args = url
-			args = ([args] << data) if data
-			req = Curl::Easy.send("http_#{method.to_s}", *args) do |curl|
-				curl.headers["Accept"] = HEADERS_ACCEPT[format]
-				curl.headers["Content-Type"] = HEADERS_CONTENT_TYPE[format]
-				curl.headers["Authorization"] = "Bearer #{@access_token}"
-				curl.verbose = @debug
-			end
-
-			response = {:code => req.response_code, :response => req.body_str}
-			return parse_response(response)
-		end
-
-		def parse_response(response)
-			body = response[:response]
-			status = response[:code]
-			ap body if @debug
-			begin
-				if status >= 400
-					raise FormStack::HTTP[status]
-				end
-				return {} if body == " " and status >= 200 and status < 300
-				return JSON.parse(body)
-			rescue => e
-				ap e.message
-				ap body
-				ap status
-				raise e
-			end
-		end
+		
 	end
 end

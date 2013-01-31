@@ -1,14 +1,21 @@
+PATH
+  remote: .
+  specs:
+    formstack (0.0.1)
+      awesome_print
+      bundler
+      json
+      oauth
+
 GEM
   remote: http://rubygems.org/
   specs:
     awesome_print (1.1.0)
-    curb (0.8.3)
     json (1.7.6)
+    oauth (0.4.7)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  awesome_print
-  curb
-  json
+  formstack!
