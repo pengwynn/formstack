@@ -19,9 +19,9 @@ module FormStack
 		attr_accessor :consumer_key, :consumer_secret, :access_token, :response_code
 		attr_accessor :return_url
 
-		BASE_URL = "https://www.formstack.com/api/v2/"
-		AUTHORIZATION_ENDPOINT = BASE_URL + "oauth2/authorize"
-		TOKEN_ENDPOINT = BASE_URL + "oauth2/token"
+		BASE_URL = "https://www.formstack.com/api/v2"
+		AUTHORIZATION_ENDPOINT = BASE_URL + "/oauth2/authorize"
+		TOKEN_ENDPOINT = BASE_URL + "/oauth2/token"
 
 		# access_token is the token received from the third party after
 		#   confirming that we have received the token_response

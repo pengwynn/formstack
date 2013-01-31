@@ -39,7 +39,7 @@ module FormStack
 			file_name = o[:file_name]
 			file_field_name = o[:file_field_name]
 
-			url = "#{@host}/#{url}.#{format.to_s}?access_token=#{@access_token.to_s}"		
+			url = "#{@host}/#{url}.#{format.to_s}?access_token=#{@configuration[:access_token]}"		
 
 			ap url if @debug
 
@@ -70,9 +70,9 @@ module FormStack
 			args = url
 			args = ([args] << data) if data
 			req = Curl::Easy.send("http_#{method.to_s}", *args) do |curl|
-				curl.headers["Accept"] = HEADERS_ACCEPT[format]
-				curl.headers["Content-Type"] = HEADERS_CONTENT_TYPE[format]
-				curl.headers["Authorization"] = "Bearer #{@access_token}"
+				curl.headers["Accept"] = FormStack::Connection::HEADERS_ACCEPT[format]
+				curl.headers["Content-Type"] = FormStack::Connection::HEADERS_CONTENT_TYPE[format]
+				curl.headers["Authorization"] = "Bearer #{@configuration[:access_token]}"
 				curl.verbose = @debug
 			end
 
@@ -86,7 +86,7 @@ module FormStack
 			ap body if @debug
 			begin
 				if status >= 400
-					raise FormStack::HTTP[status]
+					raise "HTTP Error: #{status}"
 				end
 				return {} if body == " " and status >= 200 and status < 300
 				return JSON.parse(body)
@@ -95,25 +95,6 @@ module FormStack
 				ap body
 				ap status
 				raise e
-			end
-		end
-	end
-
-
-	class HTTP
-		def self.status_name(code)
-				ActionController::StatusCodes::STATUS_CODES[code]
-		end
-
-		def self.[](code)
-			if code.is_a?(Symbol)
-				return ActionController::StatusCodes::SYMBOL_TO_STATUS_CODE[code] #returns code
-			elsif code.is_a?(Fixnum)
-				return ActionController::StatusCodes::STATUS_CODES[code] #returns name
-			elsif code.is_a?(String)
-				return ActionController::StatusCodes::STATUS_CODES.index(code) #returns code
-			else 
-				raise "I don't know what to do with this! T_T"
 			end
 		end
 	end

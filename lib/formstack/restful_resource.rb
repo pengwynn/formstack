@@ -14,11 +14,18 @@ module FormStack
 		const_set(
 			"#{class_name}", 
 			klass = Class.new(HashAttributeClass) do
-
 				const_set :CONTROLLER, class_name.downcase
 
+				def self.connection=(connection)
+					@@connection = connection
+				end
+
+				def self.connection
+					@@connection
+				end
+
 				def self.find(id)
-					result = FormStack.connection.get({
+					result = self.connection.get({
 						:url => "#{self.const_get(:CONTROLLER)}/#{id}"
 					})
 					f = self.new(result)
@@ -30,7 +37,7 @@ module FormStack
 				end
 
 				def self.update(id, attrs = {})
-					result = FormStack.connection.put({
+					result = self.connection.put({
 						:url => "#{self.const_get(:CONTROLLER)}/#{id}",
 						:params => attrs
 					})
@@ -41,7 +48,7 @@ module FormStack
 				end
 
 				def self.destroy(id)
-					result = FormStack.connection.delete({
+					result = self.connection.delete({
 						:url => "#{self.const_get(:CONTROLLER)}/#{id}"
 					})
 				end

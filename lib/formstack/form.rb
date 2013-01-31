@@ -4,7 +4,7 @@ module FormStack
 		# https://www.formstack.com/developers/api/resources/form#form_GET
 		def self.all
 			forms = []
-			result = FormStack.connection.get({
+			result = self.connection.get({
 				:url => CONTROLLER
 			})
 			result["forms"].each {|f|
@@ -15,7 +15,7 @@ module FormStack
 
 		# https://www.formstack.com/developers/api/resources/form#form_POST
 		def self.create(attrs = {})
-			result = FormStack.connection.post({
+			result = self.connection.post({
 				:url => CONTROLLER,
 				:params => self.define_attributes.merge(attrs)
 			})
@@ -23,7 +23,7 @@ module FormStack
 
 		# https://www.formstack.com/developers/api/resources/form#form/:id/copy_POST
 		def self.copy(id)
-			result = FormStack.connection.post({
+			result = self.connection.post({
 				:url => "#{CONTROLLER}/#{id}"
 			})
 			f = FormStack::Form.new
@@ -36,7 +36,7 @@ module FormStack
 		# https://www.formstack.com/developers/api/resources/field#form/:id/field_GET
 		def fields
 			fields = []
-			result = FormStack.connection.get({
+			result = self.class.connection.get({
 				:url => "#{CONTROLLER}/#{self[:id]}/field"
 			})
 			result["fields"].each {|f|
@@ -59,7 +59,7 @@ module FormStack
 		# https://www.formstack.com/developers/api/resources/submission#form/:id/submission_GET
 		def submissions
 			submissions = []
-			result = FormStack.connection.get({
+			result = self.class.connection.get({
 				:url => "#{CONTROLLER}/#{self[:id]}/submission"
 			})
 			result["submissions"].each {|s|
@@ -70,7 +70,7 @@ module FormStack
 
 		# https://www.formstack.com/developers/api/resources/submission#form/:id/submission_POST
 		def create_submission(attrs = {})
-			result = FormStack.connection.post({
+			result = self.class.connection.post({
 				:url => "#{CONTROLLER}/#{self[:id]}/submission",
 				:params => attrs
 			})
@@ -82,7 +82,7 @@ module FormStack
 		# https://www.formstack.com/developers/api/resources/confirmation#form/:id/confirmation_GET
 		def confirmations
 			confirmations = []
-			result = FormStack.connection.get({
+			result = self.class.connection.get({
 				:url => "#{CONTROLLER}/#{self[:id]}/confirmation"
 			})
 			result["confirmations"].each {|s|
@@ -93,7 +93,7 @@ module FormStack
 
 		# https://www.formstack.com/developers/api/resources/confirmation#form/:id/confirmation_POST
 		def create_confirmation(attrs = {})
-			result = FormStack.connection.post({
+			result = self.class.connection.post({
 				:url => "#{CONTROLLER}/#{self[:id]}/confirmation",
 				:params => attrs
 			})

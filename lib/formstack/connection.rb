@@ -17,6 +17,7 @@ module FormStack
 		attr_accessor :configuration
 		attr_accessor :oauth2_connection
 
+		# sets up an oauth2 connection
 		def initialize(creds = {})
 			@configuration = {}
 			FormStack::Oauth2Connection.keys.each do |key|
@@ -24,6 +25,7 @@ module FormStack
 			end
 
 			@oauth2_connection = FormStack::Oauth2Connection.new(@configuration)
+			@host = FormStack::Oauth2Connection::BASE_URL
 			@configuration
 		end
 
@@ -42,30 +44,30 @@ module FormStack
 		end
 
 
-		def forms
+		def method_missing(meth, *args, &block)
+			method_name = meth.to_s
 
+			if "forms" == method_name
+				FormStack::Form.connection = self
+				FormStack::Form
+			elsif "fields" == method_name
+				FormStack::Field.connection = self
+				FormStack::Field
+			elsif "submissions" == method_name
+				FormStack::Submission.connection = self
+				FormStack::Submission
+			elsif "notifications" == method_name
+				FormStack::Notification.connection = self
+				FormStack::Notification
+			elsif "confirmations" == method_name
+				FormStack::Confirmation.connection = self
+				FormStack::Confirmation
+			elsif "webhooks" == method_name
+				FormStack::WebHook.connection = self
+				FormStack::WebHook
+			else
+				super
+			end
 		end
-
-		def fields
-
-		end
-
-		def submissions
-
-		end
-
-		def notifications
-
-		end
-
-		def confirmations
-
-		end
-
-		def webhooks
-
-		end
-
-
 	end
 end
