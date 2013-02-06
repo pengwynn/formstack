@@ -29,6 +29,12 @@ module FormStack
 			@configuration
 		end
 
+		# set token
+		def access_token=(token)
+			@configuration[:access_token] = token
+		end
+	
+
 	    # Checks if credentials are set for OAuth2 or other service if later added
 		def check_credentials
 			raise "Please set load_configuration with #{FormStack::Oauth2Connection.keys.join(',')}" unless has_oauth2_credentials?

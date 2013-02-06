@@ -39,7 +39,7 @@ module FormStack
 			result = self.class.connection.get({
 				:url => "#{CONTROLLER}/#{self[:id]}/field"
 			})
-			result["fields"].each {|f|
+			result.each {|f|
 				fields << ((FormStack::Field.new).attributes = f)
 			}
 			return fields
@@ -47,7 +47,7 @@ module FormStack
 
 		# https://www.formstack.com/developers/api/resources/field#form/:id/field_POST
 		def create_field(attrs = {})
-			result = FormStack.connection.post({
+			result = self.class.connection.post({
 				:url => "#{CONTROLLER}/#{self[:id]}/field",
 				:params => attrs
 			})
@@ -95,6 +95,30 @@ module FormStack
 		def create_confirmation(attrs = {})
 			result = self.class.connection.post({
 				:url => "#{CONTROLLER}/#{self[:id]}/confirmation",
+				:params => attrs
+			})
+			return result
+		end
+
+		# webhooks
+
+		# https://www.formstack.com/developers/api/resources/webhook#form/:id/webhook_GET
+		def webhooks
+			webhooks = []
+			result = self.class.connection.get({
+				:url => "#{CONTROLLER}/#{self[:id]}/webhook"
+			})
+			result["webhooks"].each {|s|
+				webhooks << ((FormStack::WebHook.new).attributes = s)
+			}
+			return webhooks
+		end
+
+
+		# https://www.formstack.com/developers/api/resources/webhook#form/:id/webhook_POST
+		def create_webhook(attrs = {})
+			result = self.class.connection.post({
+				:url => "#{CONTROLLER}/#{self[:id]}/webhook",
 				:params => attrs
 			})
 			return result

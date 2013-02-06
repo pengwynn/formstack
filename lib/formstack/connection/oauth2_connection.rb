@@ -42,7 +42,6 @@ module FormStack
 			@return_url = args[:return_url]
 			@use_ssl = args[:use_ssl].nil? ? true : args[:use_ssl]
 		end
-	
 
 		# creates the url to send users to where they will "Allow" an app
 		# to connect with FormStack

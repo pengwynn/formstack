@@ -69,6 +69,9 @@ module FormStack
 
 			args = url
 			args = ([args] << data) if data
+
+			ap args
+			
 			req = Curl::Easy.send("http_#{method.to_s}", *args) do |curl|
 				curl.headers["Accept"] = FormStack::Connection::HEADERS_ACCEPT[format]
 				curl.headers["Content-Type"] = FormStack::Connection::HEADERS_CONTENT_TYPE[format]
