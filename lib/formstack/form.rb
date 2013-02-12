@@ -39,7 +39,7 @@ module FormStack
 			result = self.class.connection.get({
 				:url => "#{CONTROLLER}/#{self[:id]}/field"
 			})
-			result.each {|f|
+			result["fields"].each {|f|
 				fields << ((FormStack::Field.new).attributes = f)
 			}
 			return fields
@@ -109,7 +109,7 @@ module FormStack
 				:url => "#{CONTROLLER}/#{self[:id]}/webhook"
 			})
 			result["webhooks"].each {|s|
-				webhooks << ((FormStack::WebHook.new).attributes = s)
+				webhooks << ((FormStack::Webhook.new).attributes = s)
 			}
 			return webhooks
 		end

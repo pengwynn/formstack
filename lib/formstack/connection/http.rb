@@ -61,7 +61,7 @@ module FormStack
 			return parse_response(response)
 		end
 
-	private
+	protected
 
 		def simple_request(method, url, data, query_string = "", format = :json )
 			url = "#{@host}/#{url.to_s}.#{format.to_s}"
@@ -69,8 +69,6 @@ module FormStack
 
 			args = url
 			args = ([args] << data) if data
-
-			ap args
 			
 			req = Curl::Easy.send("http_#{method.to_s}", *args) do |curl|
 				curl.headers["Accept"] = FormStack::Connection::HEADERS_ACCEPT[format]
@@ -95,7 +93,6 @@ module FormStack
 				return JSON.parse(body)
 			rescue => e
 				ap e.message
-				ap body
 				ap status
 				raise e
 			end
