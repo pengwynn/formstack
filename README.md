@@ -2,6 +2,10 @@
 
 Simple Ruby wrapper for the [Formstack](http://formstack.com) API. 
 
+## Disclaimer
+
+You must use HTTPS with Oauth2, as there is no encryption or RSA-esque validation with Oauth2 requests. HTTPS is the onlything keeping Oauth2 access_tokens from being sniffed too easily.
+
 ## Installation
 
     sudo gem install formstack
