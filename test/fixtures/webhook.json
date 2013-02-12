@@ -1,0 +1,13 @@
+{
+    "webhooks" : [{
+       "id" : "12345",
+       "url" : "http://www.example.com/",
+       "handshake_key" : "asdf",
+       "append_data" : "0"
+    },{
+       "id" : "12345",
+       "url" : "http://www.test.com/",
+       "handshake_key" : "",
+       "append_data" : "1"
+    }]
+}

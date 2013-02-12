@@ -7,7 +7,7 @@ module FormStack
 			file_name = "form" if has_id
 			file_name = "forms" if url == "form"
 			file_name = "fields" if url =~ /field/
-
+			file_name = "webhook" if url =~ /webhook/
 
 			file_response = File.read(File.dirname(__FILE__) + "/../../../test/fixtures/#{file_name}.json")
 
