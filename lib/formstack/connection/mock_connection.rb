@@ -1,11 +1,11 @@
 module FormStack
 	module ConnectionHelpers
 		def simple_request(method, url, data, query_string = "", format = :json)
-
 			has_id = !!(url =~ /(form|submission)\/\d/)
 
 			file_name = "forms" if (url =~ /form/)
 			file_name = "form" if (url =~ /form/ and has_id)
+			file_name = "submission" if (url =~ /submission/ and has_id)
 			file_name = "fields" if url =~ /field/
 			file_name = "webhook" if url =~ /webhook/
 
