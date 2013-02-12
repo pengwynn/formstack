@@ -47,6 +47,6 @@ stub_request(:get, "https://www.formstack.com/api/v2/form/2.json").
   to_return(:status => 200, :body => {}.to_json, :headers => {})
 
 stub_request(:post, "http://www.formstack.com/api/v2/oauth2/token").
-  with(:body => {"grant_type"=>"authorization_code", "client_id"=>"11243", "redirect_uri"=>"http://test2.tinderbox.vhost/integrations/formstack/oauth_token", "code"=>"", "client_secret"=>"be517af2b3"},
+  with(:body => {"grant_type"=>"authorization_code", "client_id"=>"2", "redirect_uri"=>"http://test2.tinderbox.vhost/integrations/formstack/oauth_token", "code"=>"", "client_secret"=>"nope"},
        :headers => {'Accept'=>'*/*', 'Content-Type'=>'application/x-www-form-urlencoded'}).
   to_return(:status => 200, :body => {"access_token" => "2"}.to_json, :headers => {})
