@@ -39,7 +39,8 @@ module FormStack
 			result = self.class.connection.get({
 				:url => "#{CONTROLLER}/#{self[:id]}/field"
 			})
-			result["fields"].each {|f|
+			ap result
+			(result.is_a?(Array) ? result : result["fields"]).each {|f|
 				fields << ((FormStack::Field.new).attributes = f)
 			}
 			return fields
