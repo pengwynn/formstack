@@ -1,3 +1,16 @@
+
+require "webmock"
+require "webmock/rspec"
+include WebMock::API
+
+root_path = File.dirname(__FILE__) + "/../../../test/fixtures/"
+
+stub_request(:post, "http://www.formstack.com/api/v2/oauth2/token").
+	with(:body => {"grant_type"=>"authorization_code", "client_secret"=>"be517af2b3", "redirect_uri"=>"http://test2.tinderbox.vhost/integrations/formstack/oauth_token", "code"=>"", "client_id"=>"11243"},
+       :headers => {'Accept'=>'*/*', 'Content-Type'=>'application/x-www-form-urlencoded'}).
+  to_return(:status => 200, :body => {"access_token" => "2"}.to_json, :headers => {})
+
+
 module FormStack
 	module ConnectionHelpers
 		def simple_request(method, url, data, query_string = "", format = :json)
@@ -37,12 +50,3 @@ module FormStack
 		end
 	end
 end
-
-require "webmock"
-require "webmock/rspec"
-include WebMock::API
-
-stub_request(:post, "http://www.formstack.com/api/v2/oauth2/token").
-	with(:body => {"grant_type"=>"authorization_code", "client_secret"=>"be517af2b3", "redirect_uri"=>"http://test2.tinderbox.vhost/integrations/formstack/oauth_token", "code"=>"", "client_id"=>"11243"},
-       :headers => {'Accept'=>'*/*', 'Content-Type'=>'application/x-www-form-urlencoded'}).
-  to_return(:status => 200, :body => {"access_token" => "2"}.to_json, :headers => {})

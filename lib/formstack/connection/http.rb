@@ -93,6 +93,7 @@ module FormStack
 				return JSON.parse(body)
 			rescue => e
 				ap e.message
+				ap body
 				ap status
 				raise e
 			end
