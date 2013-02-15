@@ -21,5 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency "bundler"
   s.add_dependency "json"
   s.add_dependency "awesome_print"
+  s.add_dependency "curb"
 end
 
