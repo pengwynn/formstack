@@ -50,7 +50,6 @@ module FormStack
 			url += "?client_id=#{@consumer_key}"
 			url += "&redirect_uri=#{@return_url}"
 			url += "&response_type=code"
-			ap url
 			return url
 		end
 		alias_method :connect_url, :authorize
