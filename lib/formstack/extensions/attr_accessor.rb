@@ -1,9 +1,11 @@
+require "active_support/core_ext/hash"
+
 # Helps regular classes imitate something like an ActiveRecord Model
 class HashAttributeClass  
 	attr_accessor :attributes
 
 	def initialize(attributes = {})
-		@attributes = attributes.symbolize_keys
+		@attributes = attributes.symbolize_keys!
 	end
 
 	# @param [Symbol] attribute
@@ -31,6 +33,7 @@ class HashAttributeClass
 	end
 
 	def attributes=(hash)
+		hash = hash.symbolize_keys!
 		hash.each { |k, value| self.send("#{k}=", value) if respond_to?("#{k}=") }
 	end
 end

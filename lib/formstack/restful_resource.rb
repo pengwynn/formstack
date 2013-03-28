@@ -16,6 +16,11 @@ module FormStack
 			klass = Class.new(HashAttributeClass) do
 				const_set :CONTROLLER, class_name.downcase
 
+				def ititialize(attrs = {})
+					super
+					@attributes = defaults.merge(attrs)
+				end
+
 				def self.connection=(connection)
 					@@connection = connection
 				end

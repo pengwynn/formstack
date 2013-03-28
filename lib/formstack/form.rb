@@ -69,7 +69,7 @@ module FormStack
 				:url => "#{CONTROLLER}/#{self[:id]}/field"
 			})
 			(result.is_a?(Array) ? result : result["fields"]).each {|f|
-				fields << ((FormStack::Field.new).attributes = f)
+				fields << FormStack::Field.new(f)
 			}
 			return fields
 		end
@@ -92,7 +92,7 @@ module FormStack
 				:url => "#{CONTROLLER}/#{self[:id]}/submission"
 			})
 			result["submissions"].each {|s|
-				submissions << ((FormStack::Submission.new).attributes = s)
+				submissions << FormStack::Submission.new(s)
 			}
 			return submissions
 		end
@@ -115,7 +115,7 @@ module FormStack
 				:url => "#{CONTROLLER}/#{self[:id]}/confirmation"
 			})
 			result["confirmations"].each {|s|
-				confirmations << ((FormStack::Confirmation.new).attributes = s)
+				confirmations << FormStack::Confirmation.new(s)
 			}
 			return confirmations
 		end
@@ -138,7 +138,7 @@ module FormStack
 				:url => "#{CONTROLLER}/#{self[:id]}/webhook"
 			})
 			result["webhooks"].each {|s|
-				webhooks << ((FormStack::Webhook.new).attributes = s)
+				webhooks << FormStack::Webhook.new(s)
 			}
 			return webhooks
 		end
