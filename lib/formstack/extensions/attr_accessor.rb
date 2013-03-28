@@ -3,11 +3,12 @@ class HashAttributeClass
 	attr_accessor :attributes
 
 	def initialize(attributes = {})
-		@attributes = attributes
+		@attributes = attributes.symbolize_keys
 	end
 
+	# @param [Symbol] attribute
 	def [](attribute)
-		@attributes[attribute.to_s]
+		result = @attributes[attribute.to_sym]
 	end
 
 	# for if we want to create a bunch of getters and setters for the key-value pairs

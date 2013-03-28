@@ -1,6 +1,35 @@
 module FormStack
 	class Form < HashAttributeClass
 
+		def initialize(attrs = {})
+			super
+			defaults = {
+				:id => "",
+				:name => "",
+				:views => "",
+				:created => "",
+				:submissions => "",
+				:submissions_unread => 0,
+				:submissions_today => 0,
+				:last_submission_id => "",
+				:last_submission_time => "",
+				:url => "",
+				:data_url => "",
+				:summary_url => "",
+				:rss_url => "",
+				:encrypted => false,
+				:thumnail_url => "",
+				:submit_button_title => "",
+				:inactive => false,
+				:timezone => "",
+				:folder => "none",
+				:javascript => "",
+				:html => "",
+				:fields => []
+			}
+			@attributes = defaults.merge(attrs)
+		end
+
 		# https://www.formstack.com/developers/api/resources/form#form_GET
 		def self.all
 			forms = []
