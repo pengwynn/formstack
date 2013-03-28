@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     formstack (0.0.1)
-      active_support (>= 2.3)
+      activesupport (>= 2.3.17)
       awesome_print
       bundler
       curb
@@ -11,9 +11,9 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    active_support (3.0.0)
-      activesupport (= 3.0.0)
-    activesupport (3.0.0)
+    activesupport (3.2.13)
+      i18n (= 0.6.1)
+      multi_json (~> 1.0)
     addressable (2.3.3)
     awesome_print (1.1.0)
     bourne (1.4.0)
@@ -22,10 +22,12 @@ GEM
     curb (0.8.3)
     diff-lcs (1.2.1)
     fakeweb (1.3.0)
+    i18n (0.6.1)
     json (1.7.7)
     metaclass (0.0.1)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
+    multi_json (1.7.2)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
