@@ -22,6 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency "json"
   s.add_dependency "awesome_print"
   s.add_dependency "curb"
-  s.add_dependency "active_support"
+  s.add_dependency "active_support", "> 0"
 end
 

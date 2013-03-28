@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     formstack (0.0.1)
-      active_support
+      active_support (> 0)
       awesome_print
       bundler
       curb
