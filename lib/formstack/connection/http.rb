@@ -89,7 +89,7 @@ module FormStack
 				if status >= 400
 					raise "HTTP Error: #{status}"
 				end
-				return {} if body == " " and status >= 200 and status < 300
+				return {} if (body == " " or body == "") and status >= 200 and status < 300
 				return JSON.parse(body)
 			rescue => e
 				ap e.message

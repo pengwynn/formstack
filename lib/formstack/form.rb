@@ -70,7 +70,7 @@ module FormStack
 			})
 			(result.is_a?(Array) ? result : result["fields"]).each {|f|
 				fields << FormStack::Field.new(f)
-			}
+			} if !result.empty?
 			return fields
 		end
 
