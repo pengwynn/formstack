@@ -29,9 +29,10 @@ module FormStack
 					@@connection
 				end
 
-				def self.find(id)
+				def self.find(id, params => {})
 					result = self.connection.get({
-						:url => "#{self.const_get(:CONTROLLER)}/#{id}"
+						:url => "#{self.const_get(:CONTROLLER)}/#{id}",
+						:params => params
 					})
 					f = self.new(result)
 					return f
