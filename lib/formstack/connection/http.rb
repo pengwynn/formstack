@@ -2,12 +2,19 @@ module FormStack
 	# shorthand helpers for status codes
 	module ConnectionHelpers
 		require "curb"
+		require "addressable/uri"
 
 		def get(o = {})
 			url = o[:url]
 			params = (o[:params] or o[:data] or {})
 
-			param_string = params.empty? ? "" : QueryParams.encode(params)
+			param_string = ""
+			if !params.empty?
+				uri = Addressable::URI.new
+				uri.query_values = params
+				param_string = uri.query
+			end
+
 			return simple_request(:get, url, nil, param_string)			
 		end
 
@@ -64,12 +71,12 @@ module FormStack
 	protected
 
 		def simple_request(method, url, data, query_string = "", format = :json )
-			url = "#{@host}/#{url.to_s}.#{format.to_s}"
+			url = "#{@host}/#{url.to_s}.#{format.to_s}?#{query_string}"
 			data = data.send("to_#{format.to_s}") if data
 
 			args = url
 			args = ([args] << data) if data
-			
+			ap args
 			req = Curl::Easy.send("http_#{method.to_s}", *args) do |curl|
 				curl.headers["Accept"] = FormStack::Connection::HEADERS_ACCEPT[format]
 				curl.headers["Content-Type"] = FormStack::Connection::HEADERS_CONTENT_TYPE[format]

@@ -86,10 +86,11 @@ module FormStack
 		# submissions
 
 		# https://www.formstack.com/developers/api/resources/submission#form/:id/submission_GET
-		def submissions
+		def submissions(attrs = {})
 			submissions = []
 			result = self.class.connection.get({
-				:url => "#{CONTROLLER}/#{self[:id]}/submission"
+				:url => "#{CONTROLLER}/#{self[:id]}/submission",
+				:params => attrs
 			})
 			result["submissions"].each {|s|
 				submissions << FormStack::Submission.new(s)
