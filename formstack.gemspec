@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/TinderBox/formstack}
   s.require_path = "lib"
 
+  s.add_dependency "addressable"
   s.add_dependency "bundler"
   s.add_dependency "json"
   s.add_dependency "awesome_print"
