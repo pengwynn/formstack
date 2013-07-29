@@ -77,10 +77,14 @@ module FormStack
 			args = url
 			args = ([args] << data) if data
 			ap args if @debug
+			# we can only include he token in the url OR the header
+			# some resources (encryped submissions) require the access token
+			# be in he query string, and not the header...
+			has_url_token = query_string.include?("oauth_token")
 			req = Curl::Easy.send("http_#{method.to_s}", *args) do |curl|
 				curl.headers["Accept"] = FormStack::Connection::HEADERS_ACCEPT[format]
 				curl.headers["Content-Type"] = FormStack::Connection::HEADERS_CONTENT_TYPE[format]
-				curl.headers["Authorization"] = "Bearer #{@configuration[:access_token]}"
+				curl.headers["Authorization"] = "Bearer #{@configuration[:access_token]}" if !has_url_token
 				curl.verbose = @debug
 			end
 
