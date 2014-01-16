@@ -59,9 +59,6 @@ module FormStack
 			@response_code = response[:code]
 			state = response[:state]
 
-			url = TOKEN_ENDPOINT
-			url.gsub!("https", "http") if !@use_ssl
-
 			data = {
 				:client_id => @consumer_key,
 				:code => @response_code,
@@ -70,8 +67,9 @@ module FormStack
 				:grant_type => "authorization_code"
 			}
 
-			uri = URI.parse(url)
-			http = Net::HTTP.new(uri.host)
+			uri = URI.parse(TOKEN_ENDPOINT)
+			http = Net::HTTP.new(uri.host, 443)
+			http.use_ssl = true
 			request = Net::HTTP::Post.new(uri.request_uri)
 			request.set_form_data(data)
 			response = http.request(request)
