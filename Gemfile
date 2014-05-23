@@ -6,4 +6,5 @@ group :test do
 	gem "rspec"
 	gem "shoulda"
 	gem "fakeweb"
+	gem "pry-byebug"
 end
