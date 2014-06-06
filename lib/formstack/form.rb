@@ -24,9 +24,7 @@ module FormStack
         :timezone => "",
         :folder => "none",
         :javascript => "",
-        :html => "",
-        :fields => []
-      }
+        :html => ""      }
       @attributes = defaults.merge(attrs)
     end
 
@@ -183,6 +181,20 @@ module FormStack
       end
     end
 
+
+    # fields that can contain data
+    def data_fields
+    	if @data_fields.present?
+    		@data_fields
+    	else
+    		@data_fields = []
+    		fields.each do |field|
+    			next if field["type"] == "section"
+    			@data_fields << field
+    		end
+    	end
+    end
+
     # for a given submission_id,
     # generate a hash of field name to value
     def values_for_submission_id(submission_id, include_hidden = false)
@@ -193,17 +205,16 @@ module FormStack
       submission ||= self.class.connection.submissions.find(submission_id)
 			instance_variable_set("@submission_#{submission_id}", submission)
 
-      fields = self.fields
+      fields = self.data_fields
 
       fields.each do |field|
-        next if (!include_hidden and (field["hidden"] == "1" or field["type"] == "section"))
+        next if !include_hidden && field["hidden"] == "1"
 
         name = field["name"]
         default = field["default"]
         value = ((submission ? submission.value_of(field["id"]) : default) || default)
         result[name] = value
       end
-
       result
     end
 

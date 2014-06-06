@@ -83,7 +83,9 @@ describe FormStack::Form do
     it "returns default hash for bad submission id" do
       FormStack::Submission.stub(:find).and_return(nil)
       result = @form.values_for_submission_id(9999999)
-      @form.fields.each do | field |
+
+      result.should_not be_empty
+      @form.data_fields.each do | field |
         result[field["name"]].should == field["default"]
       end
     end
