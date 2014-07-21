@@ -24,7 +24,7 @@ module FormStack
         :timezone => "",
         :folder => "none",
         :javascript => "",
-        :html => ""      }
+      :html => ""      }
       @attributes = defaults.merge(attrs)
     end
 
@@ -183,16 +183,32 @@ module FormStack
 
 
     # fields that can contain data
-    def data_fields
-    	if @data_fields.present?
-    		@data_fields
-    	else
-    		@data_fields = []
-    		fields.each do |field|
-    			next if field["type"] == "section"
-    			@data_fields << field
-    		end
-    	end
+    # skip [Hash] could:
+    #  data_fields( skip: { label: ["account_id", "object"]} )
+    #  - the key must have an array value of skip strings
+    def data_fields(skip: nil)
+      if @data_fields.present?
+        @data_fields
+      else
+        @data_fields = []
+        fields.each do |field|
+          next if (field["type"] == "section" or field["name"].empty? or field["label"].empty?)
+
+          if skip.present?
+            # because we need this to exit our fields.each loop,
+            # we can't use another .each to check skippage
+            skip_loop = lambda do |field, skip_options|
+              skip_options.each do |key, skip_values|
+                return :next if skip_values.include?(field[key])
+              end
+            end
+
+            next if :next == skip_loop.call(field, skip)
+          end
+         @data_fields << field
+        end
+      end
+      @data_fields
     end
 
     # for a given submission_id,
@@ -202,13 +218,13 @@ module FormStack
 
       # cache submission
       submission = instance_variable_get("@submission_#{submission_id}")
-      submission ||= self.class.connection.submissions.find(submission_id)
-			instance_variable_set("@submission_#{submission_id}", submission)
+      submission ||= FormStack::Submission.find(submission_id)
+      instance_variable_set("@submission_#{submission_id}", submission)
 
       fields = self.data_fields
 
       fields.each do |field|
-        next if !include_hidden && field["hidden"] == "1"
+        next if (!include_hidden && (field["hidden"] == "1" or field["name"].empty? or field["type"] == "section"))
 
         name = field["name"]
         default = field["default"]

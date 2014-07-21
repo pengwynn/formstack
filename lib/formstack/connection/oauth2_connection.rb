@@ -11,7 +11,7 @@ module FormStack
 		# but consumer is just another word for "your application"
 		# really, I don't like any of these names... -_-
 		#
-		# response_token is the code return from FormStack 
+		# response_token is the code return from FormStack
 		#
 		# when registering an application.
 		# the access_token is the toke from FormStack
@@ -75,6 +75,9 @@ module FormStack
 			response = http.request(request)
 
 			response_body = JSON.parse(response.body)
+			if (error = response_body["error"]).present?
+				raise error
+			end
 			@access_token = response_body["access_token"]
 
 			return @access_token
@@ -90,7 +93,7 @@ module FormStack
 
 		# Checks if OAuth credentials are set.
 		def has_oauth2_credentials?
-			[@access_token].each do |cred| 
+			[@access_token].each do |cred|
 				return false if cred.nil? || cred.match(/^\s*$/)
 			end
 

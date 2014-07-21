@@ -15,7 +15,7 @@ module FormStack
 				param_string = uri.query
 			end
 
-			return simple_request(:get, url, nil, param_string)			
+			return simple_request(:get, url, nil, param_string)
 		end
 
 		def post(o = {})
@@ -46,7 +46,7 @@ module FormStack
 			file_name = o[:file_name]
 			file_field_name = o[:file_field_name]
 
-			url = "#{@host}/#{url}.#{format.to_s}?access_token=#{@configuration[:access_token]}"		
+			url = "#{@host}/#{url}.#{format.to_s}?access_token=#{@configuration[:access_token]}"
 
 			ap url if @debug
 
@@ -55,8 +55,8 @@ module FormStack
 			data.each do |name,obj|
 				if obj and obj.is_a?(Hash)
 					obj.each do |attribute, value|
-						post_fields << Curl::PostField.content("#{name}[#{attribute}]", value)	
-					end				
+						post_fields << Curl::PostField.content("#{name}[#{attribute}]", value)
+					end
 				end
 			end
 
@@ -75,7 +75,7 @@ module FormStack
 			data = data.send("to_#{format.to_s}") if data
 
 			args = url
-			args = ([args] << data) if data
+			args = ([args] << data) if data and method != :delete
 			ap args if @debug
 			# we can only include he token in the url OR the header
 			# some resources (encryped submissions) require the access token
