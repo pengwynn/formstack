@@ -90,6 +90,7 @@ module FormStack
         :url => "#{CONTROLLER}/#{self[:id]}/submission",
         :params => attrs
       )
+      raise result['error'] if result['status'] == 'error'
       result["submissions"].each {|s|
         submissions << FormStack::Submission.new(s)
       }
