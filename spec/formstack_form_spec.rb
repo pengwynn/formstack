@@ -58,13 +58,13 @@ describe FormStack::Form do
     end
 
     it "should create a new field if the field doesn't exist" do
-      @forms.stub(:fields).and_return([])
+      @form.stub(:fields).and_return([])
       result = @form.get_id_of_field_name("test", "text")
       result.should == "12345"
     end
 
     it "should not create a new field if the field doesn't exist" do
-      @forms.stub(:fields).and_return([])
+      @form.stub(:fields).and_return([])
       result = @form.get_id_of_field_name("test")
       result.should == nil
     end
