@@ -15,7 +15,7 @@ describe FormStack::Form do
     forms.first[:name].should == 'Contact'
   end
 
-  it "should get details for a form" do
+  it "loads field details for a form" do
     stub_get("/form?id=1234&type=json&api_key=OU812", "form.json")
     form = @client.forms.find(1234)
     form.fields.size.should == 5
@@ -23,6 +23,29 @@ describe FormStack::Form do
     first.should be_kind_of(FormStack::Field)
 
     first["section_heading"].should == 'Contact Information'
+  end
+
+  it "loads confirmations for a form" do
+    stub_get("/form?id=1234&type=json&api_key=OU812", "form.json")
+    form = @client.forms.find(1234)
+    confirmations = form.confirmations
+    confirmations.size.should == 1
+
+    confirm = confirmations.first
+    confirm.should be_kind_of(FormStack::Confirmation)
+    confirm["sender"].should == "example@yourdomain.com"
+  end
+
+  it "loads webhooks for a form" do
+    stub_get("/form?id=1234&type=json&api_key=OU812", "form.json")
+    form = @client.forms.find(1234)
+    webhooks = form.webhooks
+    webhooks.size.should == 2
+
+    hook = webhooks.first
+    hook.should be_kind_of(FormStack::Webhook)
+    hook["url"].should == "http://www.example.com/"
+    hook["append_data"].should == "0"
   end
 
   it "should get submitted data for a form" do

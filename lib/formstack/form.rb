@@ -8,6 +8,7 @@ module FormStack
         :name => "",
         :views => "",
         :created => "",
+        :updated => "",
         :submissions => "",
         :submissions_unread => 0,
         :submissions_today => 0,
@@ -24,7 +25,9 @@ module FormStack
         :timezone => "",
         :folder => "none",
         :javascript => "",
-      :html => ""      }
+        :html => "",
+        :fields => []
+      }
       @attributes = defaults.merge(attrs)
     end
 
@@ -63,9 +66,16 @@ module FormStack
     # https://www.formstack.com/developers/api/resources/field#form/:id/field_GET
     def fields
       fields = []
-      result = self.class.connection.get(
-        :url => "#{CONTROLLER}/#{self[:id]}/field"
-      )
+
+      # Avoid secondary call to get field list if we already have it with the form data.
+      if self['fields'].present?
+        result = self['fields']
+      else
+        result = self.class.connection.get(
+          :url => "#{CONTROLLER}/#{self[:id]}/field"
+        )
+      end
+
       (result.is_a?(Array) ? result : result["fields"]).each {|f|
         fields << FormStack::Field.new(f)
       } if !result.empty?
@@ -114,9 +124,11 @@ module FormStack
       result = self.class.connection.get(
         :url => "#{CONTROLLER}/#{self[:id]}/confirmation"
       )
-      result["confirmations"].each {|s|
-        confirmations << FormStack::Confirmation.new(s)
-      }
+      if result && result["confirmations"].present?
+        result["confirmations"].each {|s|
+          confirmations << FormStack::Confirmation.new(s)
+        }
+      end
       return confirmations
     end
 

@@ -15,6 +15,7 @@ module FormStack
 			file_name = "submission" if (url =~ /submission/ and has_id)
 			file_name = "fields" if url =~ /field/
 			file_name = "webhook" if url =~ /webhook/
+			file_name = "confirmation" if url =~ /confirmation/
 
 			plural = true if (url =~ /submission/ and has_id and url =~ /form/)
 
