@@ -24,5 +24,13 @@ Gem::Specification.new do |s|
   s.add_dependency "awesome_print"
   s.add_dependency "curb"
   s.add_dependency("activesupport", ">= 2.3.17")
+
+  s.add_development_dependency "rake"
+  s.add_development_dependency "webmock"
+  s.add_development_dependency "rspec"
+  s.add_development_dependency "simplecov"
+  s.add_development_dependency "shoulda"
+  s.add_development_dependency "fakeweb"
+  s.add_development_dependency "pry-byebug"
 end
 

@@ -1,0 +1,12 @@
+{
+    "confirmations" : [{
+        "id" : "516",
+        "form" : "144823",
+        "name" : "Test Form",
+        "to_field" : "12345",
+        "sender" : "example@yourdomain.com",
+        "subject" : "Thank you again!",
+        "message" : "Thank you for your submission...",
+        "delay" : ""
+    }]
+}
