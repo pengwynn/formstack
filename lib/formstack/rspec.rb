@@ -2,8 +2,8 @@
 module RSpec
 	# mock everything
 	objs = {
-		:forms => FormStack::Form, 
-		:fields => FormStack::Field, 
+		:forms => FormStack::Form,
+		:fields => FormStack::Field,
 		:submissions => FormStack::Submission,
 		:notifications => FormStack::Notification,
 		:confirmations => FormStack::Confirmation,
@@ -14,14 +14,17 @@ module RSpec
 		FormStack::Connection.any_instance.stub(name).and_return(klass)
 		# somehow make the id of this be the passed in id?
 		klass.stub(:find) do |id|
+			raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 			klass.new({:id => id})
 		end
 
 		klass.stub(:update) do |id, arg|
+			raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 			klass.new({:id => id}.merge(arg))
 		end
 
 		klass.stub(:destroy) do |id|
+			raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 			id
 		end
 	end
@@ -31,7 +34,7 @@ module RSpec
 		num_things_to_return ||= 0
 		# actual method doesn't take a param
 		result = []
-		num_things_to_return.times do 
+		num_things_to_return.times do
 			result << FormStack.Form.new
 		end
 		result
@@ -52,7 +55,7 @@ module RSpec
 		:create_field => FormStack::Field,
 		:create_submission => FormStack::Submission,
 		:create_confirmations => FormStack::Confirmation,
-		:create_webhook => FormStack::Webhook,	
+		:create_webhook => FormStack::Webhook,
 	}
 
 	form_instance_methods.each do |meth, klass|

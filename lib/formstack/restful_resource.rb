@@ -25,6 +25,7 @@ module FormStack
 				end
 
 				def self.find(id, params = {})
+					raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 					result = self.connection.get({
 						:url => "#{self.const_get(:CONTROLLER)}/#{id}",
 						:params => params
@@ -38,6 +39,7 @@ module FormStack
 				end
 
 				def self.update(id, attrs = {})
+					raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 					result = self.connection.put({
 						:url => "#{self.const_get(:CONTROLLER)}/#{id}",
 						:params => attrs
@@ -49,6 +51,7 @@ module FormStack
 				end
 
 				def self.destroy(id)
+					raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 					result = self.connection.delete({
 						:url => "#{self.const_get(:CONTROLLER)}/#{id}"
 					})
