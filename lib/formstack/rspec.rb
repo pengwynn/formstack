@@ -14,16 +14,19 @@ module RSpec
 		FormStack::Connection.any_instance.stub(name).and_return(klass)
 		# somehow make the id of this be the passed in id?
 		klass.stub(:find) do |id|
+			id = id.to_i
 			raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 			klass.new({:id => id})
 		end
 
 		klass.stub(:update) do |id, arg|
+			id = id.to_i
 			raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 			klass.new({:id => id}.merge(arg))
 		end
 
 		klass.stub(:destroy) do |id|
+			id = id.to_i
 			raise ArgumentError, "id of '#{id}' is invalid" if !id or id < 1
 			id
 		end
