@@ -1,0 +1,6 @@
+# http://docs.solanolabs.com/RunningBuild/config-file-reference/
+:tddium:
+  :environment:
+    'COVERAGE': true # simplecov
+  :ruby_version: ruby-2.1.2
+  :coverage: true
