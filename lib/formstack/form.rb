@@ -124,6 +124,7 @@ module FormStack
       result = self.class.connection.get(
         :url => "#{CONTROLLER}/#{self[:id]}/confirmation"
       )
+      raise result['error'] if result['status'] == 'error'
       if result && result["confirmations"].present?
         result["confirmations"].each {|s|
           confirmations << FormStack::Confirmation.new(s)
@@ -149,6 +150,7 @@ module FormStack
       result = self.class.connection.get(
         :url => "#{CONTROLLER}/#{self[:id]}/webhook"
       )
+      raise result['error'] if result['status'] == 'error'
       result["webhooks"].each {|s|
         webhooks << FormStack::Webhook.new(s)
       }
