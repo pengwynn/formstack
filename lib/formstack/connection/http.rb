@@ -86,6 +86,8 @@ module FormStack
 				curl.headers["Content-Type"] = FormStack::Connection::HEADERS_CONTENT_TYPE[format]
 				curl.headers["Authorization"] = "Bearer #{@configuration[:access_token]}" if !has_url_token
 				curl.verbose = @debug
+				# Temp disable until CA cert is updated.
+				curl.ssl_verify_peer = false
 			end
 
 			response = {:code => req.response_code, :response => req.body_str}
