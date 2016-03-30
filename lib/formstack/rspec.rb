@@ -62,7 +62,7 @@ module RSpec
 	}
 
 	form_instance_methods.each do |meth, klass|
-		FormStack::Form.any_instance.stub(meth) do |num_things_to_return|
+		FormStack::Form.any_instance.stub(meth) do |_, num_things_to_return|
 			num_things_to_return ||= 0
 			# actual method doesn't take a param
 			result = []
@@ -74,7 +74,7 @@ module RSpec
 	end
 
 	form_instance_methods_that_create.each do |meth, klass|
-		FormStack::Form.any_instance.stub(meth) do |attrs, num_things_to_return|
+		FormStack::Form.any_instance.stub(meth) do |_, attrs, num_things_to_return|
 			num_things_to_return ||= 1
 			# actual method doesn't take this param
 			result = nil
